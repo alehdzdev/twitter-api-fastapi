@@ -1,0 +1,22 @@
+# docker-compose.yml
+
+version: '3.8'
+
+services:
+  web:
+    image: twitter:1.0.0
+    build: .
+    volumes:
+      - .:/backend
+    ports:
+      - 8000:8000
+    depends_on:
+        - db
+    env_file:
+      - .env
+  db:
+    image: percona:8
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env
