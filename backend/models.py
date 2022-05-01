@@ -1,4 +1,3 @@
-from signal import default_int_handler
 from uuid import UUID
 from datetime import date, datetime
 from typing import Optional
