@@ -74,7 +74,14 @@ def login(user: UserLogin = Body(...)):
     tags=['Users'],
 )
 def show_all_users():
-    pass
+    """
+    Show all users
+
+    This path operation returns a json with all users registered in the app
+    """
+    with open("backend/users.json", "r+", encoding='utf-8') as f:
+        results = json.loads(f.read())
+        return results
 
 
 @app.get(
