@@ -1,10 +1,11 @@
+import json
 from typing import List
 
 # FastAPI
-from fastapi import FastAPI, status
+from fastapi import FastAPI, status, Body
 
 # Local
-from .models import User, Tweet
+from .models import User, Tweet, UserRegister, UserLogin
 
 app = FastAPI()
 
@@ -19,8 +20,34 @@ app = FastAPI()
     summary='Create a new user',
     tags=['Auth'],
 )
-def signup():
-    pass
+def signup(user: UserRegister = Body(...)):
+    """
+    Signup
+
+    This path operation register a user in the app
+
+    Parametrs:
+        - Request body parameter
+            - user: UserRegister
+
+    Returns a json with the basic user information:
+        - user_id: UUID
+        - email: EmailStr
+        - first_name: str
+        - last_name: str
+        - birth_date: datetime
+    """
+    with open("backend/users.json", "r+", encoding='utf-8') as f:
+        results = json.loads(f.read())
+        user_dict = user.dict()
+        user_dict['user_id'] = str(user_dict['user_id'])
+        user_dict['birth_date'] = str(user_dict['birth_date'])
+        results.append(user_dict)
+        f.seek(0)
+        f.write(json.dumps(results))
+        return user
+
+
 
 
 @app.post(
@@ -30,9 +57,14 @@ def signup():
     summary='Login a new user',
     tags=['Auth'],
 )
-def login():
-    pass
-
+def login(user: UserLogin = Body(...)):
+    """Search in users.json for a coincidence on an email and password"""
+    with open("backend/users.json", "r+", encoding='utf-8') as f:
+        results = json.loads(f.read())
+        user_dict = user.dict()
+        for register_user in results:
+            if register_user['email'] == user_dict['email'] and register_user['password'] == user_dict['password']:
+                return User(**register_user)
 
 @app.get(
     path='/users',
