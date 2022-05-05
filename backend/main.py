@@ -136,8 +136,36 @@ def home():
     summary='Create a new tweet',
     tags=['Tweets'],
 )
-def create_tweet():
-    pass
+def create_tweet(tweet: Tweet = Body(...)):
+    """
+    Create a new tweet
+
+    This path operation creates a new tweet in the app
+
+    Parametrs:
+        - Request body parameter
+            - tweet: UserRegister
+
+    Returns a json with the basic tweet information:
+        - tweet_id: UUID
+        - content: str
+        - created_at: datetime
+        - updated_at: datetime
+        - by: User
+    """
+    with open("backend/tweets.json", "r+", encoding='utf-8') as f:
+        results = json.loads(f.read())
+        tweet_dict = tweet.dict()
+        tweet_dict['tweet_id'] = str(tweet_dict['tweet_id'])
+        tweet_dict['created_at'] = str(tweet_dict['created_at'])
+        if tweet_dict.get('updated_at') is not None:
+            tweet_dict['updated_at'] = str(tweet_dict['updated_at'])
+        tweet_dict['by']['user_id'] = str(tweet_dict['by']['user_id'])
+        tweet_dict['by']['birth_date'] = str(tweet_dict['by']['birth_date'])
+        results.append(tweet_dict)
+        f.seek(0)
+        f.write(json.dumps(results))
+        return tweet
 
 
 
