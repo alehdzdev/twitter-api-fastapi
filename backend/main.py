@@ -126,7 +126,14 @@ def update_user():
     tags=['Tweets'],
 )
 def home():
-    return {"Twitter API": "Working"}
+    """
+    Show all tweets
+
+    This path operation returns a json with all tweets in the app
+    """
+    with open("backend/tweets.json", "r+", encoding='utf-8') as f:
+        results = json.loads(f.read())
+        return results
 
 
 @app.post(
